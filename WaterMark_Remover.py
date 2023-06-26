@@ -4,36 +4,19 @@ from kivymd.uix.boxlayout import MDBoxLayout
 from kivy.uix.image import Image
 from kivymd.uix.screen import Screen
 from kivymd.uix.button import MDRaisedButton
-from kivy.lang import Builder
-from kivy.clock import Clock
 from kivy.graphics.texture import Texture
 import cv2
 
 Window.size = (360, 600)
-screen_helper = """
-Screen:
-    MDBoxLayout:
-        orientation: "vertical"
-
-        Image:
-            source: "Dracaufeu.png"
-        MDRaisedButton:
-            text: "Click here"
-            pos_hint: {"center_x":0.5, "center_y":0.5}
-            size_hint: (None, None)
-
-
-"""
 
 
 class WaterMarkRemoverApp(MDApp):
 
     def build(self):
         self.theme_cls.theme_style = "Dark"
-        self.count = 0
         screen = Screen()
         layout = MDBoxLayout(orientation="vertical")
-        self.image = Image(source="Resources/mainWm.jpg") # Here the main Image with WaterMark
+        self.image = Image(source="Resources/mainWm.jpg")
         button = MDRaisedButton(text="Click here",
                                 pos_hint={"center_x": 0.5, "center_y": 0.5},
                                 size_hint=(None, None),
@@ -46,7 +29,7 @@ class WaterMarkRemoverApp(MDApp):
 
     def remove_WaterMark(self, *args):
         src = cv2.imread(self.image.source)
-        mask = cv2.imread("Resources/Wm.png", cv2.IMREAD_GRAYSCALE) # put here the WaterMark to remove
+        mask = cv2.imread("Resources/Wm.png", cv2.IMREAD_GRAYSCALE)  # put here the WaterMark to remove
         (h, w, _) = src.shape
         mask = cv2.resize(mask, (w, h))
         dest = cv2.inpaint(src, mask, 3, cv2.INPAINT_NS)
@@ -54,10 +37,6 @@ class WaterMarkRemoverApp(MDApp):
         texture = Texture.create(size=(dest.shape[1], dest.shape[0]), colorfmt="bgr")
         texture.blit_buffer(buffer, colorfmt="bgr", bufferfmt="ubyte")
         self.image.texture = texture
-
-        #image_id = "picture " + str(self.count) + ".jpg"
-        #cv2.imwrite("Camera_Pictures/" + image_id, self.image)
-        self.count += 1
 
 
 if __name__ == '__main__':
