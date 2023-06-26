@@ -1,3 +1,5 @@
+import time
+
 from kivymd.app import MDApp
 from kivy.core.window import Window
 from kivymd.uix.boxlayout import MDBoxLayout
@@ -10,6 +12,7 @@ import cv2
 import numpy as np
 from keras.utils import img_to_array
 from keras.models import model_from_json
+from kivymd.uix.label import MDLabel
 
 model = model_from_json(open("Resources/facial_expression_model_structure.json", 'r').read())
 model.load_weights("Resources/facial_expression_model_weights.h5")
@@ -24,13 +27,19 @@ class CameraApp(MDApp):
         screen = Screen()
         layout = MDBoxLayout(orientation="vertical")
         self.image = Image()
+        self.label = MDLabel(halign="center",
+                             theme_text_color="Custom",
+                             text_color=(0, 1, 0, 1),
+                             font_style="H3")
         self.face_Cascade = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_frontalface_default.xml')
         button = MDRaisedButton(text="Click here",
                                 pos_hint={"center_x": 0.5, "center_y": 0.5},
                                 size_hint=(None, None),
-                                on_release=self.take_picture)
+                                on_press=self.take_picture,
+                                on_release=self.take_picture_helper)
 
         layout.add_widget(self.image)
+        layout.add_widget(self.label)
         layout.add_widget(button)
         screen.add_widget(layout)
 
@@ -67,10 +76,12 @@ class CameraApp(MDApp):
     def take_picture(self, *args):
         image_id = "picture " + str(self.count) + ".jpg"
         cv2.imwrite("Camera_Pictures/" + image_id, self.frame)
-        cv2.rectangle(self.frame, (0, 50), (300, 100), (0, 255, 0), cv2.FILLED)
-        cv2.putText(self.frame, "Scan Saved", (10, 50), cv2.FONT_HERSHEY_DUPLEX, 2, (0, 0, 255), 2)
-        cv2.waitKey(500)
+        self.label.text = "Picture Saved"
         self.count += 1
+
+    def take_picture_helper(self, *args):
+        time.sleep(0.5)
+        self.label.text = ""
 
 
 if __name__ == '__main__':
