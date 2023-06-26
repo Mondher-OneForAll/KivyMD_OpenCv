@@ -16,7 +16,7 @@ class WaterMarkRemoverApp(MDApp):
         self.theme_cls.theme_style = "Dark"
         screen = Screen()
         layout = MDBoxLayout(orientation="vertical")
-        self.image = Image(source="Resources/mainWm.jpg")
+        self.image = Image(source="Resources/BG.png")
         button = MDRaisedButton(text="Click here",
                                 pos_hint={"center_x": 0.5, "center_y": 0.5},
                                 size_hint=(None, None),
@@ -29,7 +29,7 @@ class WaterMarkRemoverApp(MDApp):
 
     def remove_WaterMark(self, *args):
         src = cv2.imread(self.image.source)
-        mask = cv2.imread("Resources/Wm.png", cv2.IMREAD_GRAYSCALE)  # put here the WaterMark to remove
+        mask = cv2.imread("Resources/WM.png", cv2.IMREAD_GRAYSCALE)  # put here the WaterMark to remove
         (h, w, _) = src.shape
         mask = cv2.resize(mask, (w, h))
         dest = cv2.inpaint(src, mask, 3, cv2.INPAINT_NS)
